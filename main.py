@@ -25,8 +25,10 @@ def postData(url, payload, company) -> str:
         response = requests.request('POST', url, headers=headers, data=payload)
     except requests.exceptions.Timeout:
         print('Superado el tiempo de espera al levantar la cola.')
+        return ''
     except requests.exceptions.RequestException as e:
         print(f'Error al levantar la cola. {e}')
+        return ''
 
     return response.json()
 
@@ -57,11 +59,31 @@ def getColas(company) -> str:
         response = requests.request("GET", url, headers=headers, data=payload)
     except requests.exceptions.Timeout:
         print('Superado el tiempo de espera al leer las colas.')
+        return ''
     except requests.exceptions.RequestException as e:
         print(f'Error al leer las colas. {e}')
+        return ''
 
 
     return response.json()
+
+
+def update_log(item, companyname):
+    try:
+        file_object = open('log.txt', 'a')
+
+        file_object.write('{0};{1};{2};{3};{4};{5}'.format(
+            companyname,
+            str(datetime.now()),
+            item['Object_Type_to_Run'],
+            item['Object_ID_to_Run'],
+            item['Description'],
+            'Cola reactivada'
+        ))
+    except IOError:
+        print('Error al escribir en el log')
+    finally:
+        file_object.close()
 
 
 def procesa_empresa(company):
@@ -77,6 +99,7 @@ def procesa_empresa(company):
                 )
 
                 if activaCola(item['ID'], company):
+                    update_log(item, company['name'])
                     print('')
                     print('Correcto')
                 else:
