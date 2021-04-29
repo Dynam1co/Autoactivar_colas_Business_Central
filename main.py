@@ -57,7 +57,7 @@ def procesa_empresa(company):
     json_respuesta = getColas(company)
 
     for item in json_respuesta['value']:
-        if (item['Object_ID_to_Run'] >= 50000) and (item['Object_ID_to_Run'] <= 70000):
+        if (item['Object_ID_to_Run'] >= 50000) and (item['Object_ID_to_Run'] <= 99999):
             if item['Status'] not in ['Ready', 'In Process']:
                 print('Cola tipo: {0} id: {1} nombre: {2} esta parada. Se va a arrancar.'.format(
                     item['Object_Type_to_Run'],
