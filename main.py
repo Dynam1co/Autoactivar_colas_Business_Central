@@ -1,48 +1,50 @@
-import conf_management as cfg
 import base64
 import json
 import requests
+import time
+from datetime import datetime
 
 
-def getUserPassBase64(produccion) -> str:
-    message = cfg.get_user(produccion) + ':' + cfg.get_pass(produccion)
+def getUserPassBase64(company) -> str:
+    message = company['user'] + ':' + company['pass']
     message_bytes = message.encode('ascii')
     base64_bytes = base64.b64encode(message_bytes)
     base64_message = base64_bytes.decode('ascii')
 
     return base64_message
 
-def postData(url, payload, produccion) -> str:
+
+def postData(url, payload, company) -> str:
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + getUserPassBase64(produccion),
+        'Authorization': 'Basic ' + getUserPassBase64(company),
         'Cookie': 'RuntimeTenantAffinity=msweua3554t49851626'
     }
-
-    print(url)
 
     response = requests.request('POST', url, headers=headers, data=payload)
 
     return response.json()
 
-def activaCola(idCola, produccion):
+
+def activaCola(idCola, company) -> bool:
     data = {}
 
     data['pIdCola'] = idCola
 
     json_data = json.dumps(data)
 
-    result = postData(cfg.get_endpoint_activar_colas(produccion), json_data, produccion)
+    result = postData(company['endpoint_activar'], json_data, company)
 
-    print(result)
+    return result['value']
 
-def getColas(produccion) -> str:
-    url = cfg.get_endpoint_consulta_colas(produccion)
+
+def getColas(company) -> str:
+    url = company['endpoint_colas']
 
     payload={}
 
     headers = {
-        'Authorization': 'Basic ' + getUserPassBase64(produccion),
+        'Authorization': 'Basic ' + getUserPassBase64(company),
         'Cookie': 'RuntimeTenantAffinity=msweua3554t49851626'
     }
 
@@ -51,10 +53,8 @@ def getColas(produccion) -> str:
     return response.json()
 
 
-if __name__ == '__main__':
-    produccion = False
-
-    json_respuesta = getColas(produccion)
+def procesa_empresa(company):
+    json_respuesta = getColas(company)
 
     for item in json_respuesta['value']:
         if (item['Object_ID_to_Run'] >= 50000) and (item['Object_ID_to_Run'] <= 70000):
@@ -65,5 +65,33 @@ if __name__ == '__main__':
                     item['Description'])
                 )
 
-                activaCola(item['ID'], produccion)
+                if activaCola(item['ID'], company):
+                    print('')
+                    print('Correcto')
+                else:
+                    print('')
+                    print('No se ha podido reactivar')
 
+
+if __name__ == '__main__':
+    config_path = 'config.ini'
+
+    with open(config_path) as f:
+        conf = json.load(f)
+
+        while 1:
+            print('##############################')
+            print(datetime.now())
+            print('##############################')
+            print('')
+
+            for company in conf['companies']:
+                print(f"Comprobando empresa: {company['name']}")
+
+                procesa_empresa(company)
+
+                print('')
+                print('---------------------------------')
+                print('')
+
+            time.sleep(5)
