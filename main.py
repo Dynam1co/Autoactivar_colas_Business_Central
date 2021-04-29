@@ -94,4 +94,4 @@ if __name__ == '__main__':
                 print('---------------------------------')
                 print('')
 
-            time.sleep(5)
+            time.sleep(120)
