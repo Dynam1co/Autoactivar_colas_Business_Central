@@ -21,7 +21,12 @@ def postData(url, payload, company) -> str:
         'Cookie': 'RuntimeTenantAffinity=msweua3554t49851626'
     }
 
-    response = requests.request('POST', url, headers=headers, data=payload)
+    try:
+        response = requests.request('POST', url, headers=headers, data=payload)
+    except requests.exceptions.Timeout:
+        print('Superado el tiempo de espera al levantar la cola.')
+    except requests.exceptions.RequestException as e:
+        print(f'Error al levantar la cola. {e}')
 
     return response.json()
 
@@ -48,7 +53,13 @@ def getColas(company) -> str:
         'Cookie': 'RuntimeTenantAffinity=msweua3554t49851626'
     }
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    try:
+        response = requests.request("GET", url, headers=headers, data=payload)
+    except requests.exceptions.Timeout:
+        print('Superado el tiempo de espera al leer las colas.')
+    except requests.exceptions.RequestException as e:
+        print(f'Error al leer las colas. {e}')
+
 
     return response.json()
 
