@@ -56,16 +56,14 @@ if __name__ == '__main__':
 
     json_respuesta = getColas(produccion)
 
-    # for key, value in json_respuesta.items():
-        # print(key, ':', value)
-
     for item in json_respuesta['value']:
         if (item['Object_ID_to_Run'] >= 50000) and (item['Object_ID_to_Run'] <= 70000):
             if item['Status'] not in ['Ready', 'In Process']:
                 print('Cola tipo: {0} id: {1} nombre: {2} esta parada. Se va a arrancar.'.format(
                     item['Object_Type_to_Run'],
                     item['Object_ID_to_Run'],
-                    item['Description']))
+                    item['Description'])
+                )
 
                 activaCola(item['ID'], produccion)
 
