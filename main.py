@@ -72,7 +72,7 @@ def update_log(item, companyname):
     try:
         file_object = open('log.txt', 'a')
 
-        file_object.write('{0};{1};{2};{3};{4};{5}'.format(
+        file_object.write('\n{0};{1};{2};{3};{4};{5}'.format(
             companyname,
             str(datetime.now()),
             item['Object_Type_to_Run'],
