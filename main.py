@@ -25,9 +25,13 @@ def postData(url, payload, company) -> str:
         response = requests.request('POST', url, headers=headers, data=payload)
     except requests.exceptions.Timeout:
         print('Superado el tiempo de espera al levantar la cola.')
+        save_log(company['name'], 'Error al levantar las colas', 'Superado el tiempo de espera')
+
         return ''
     except requests.exceptions.RequestException as e:
         print(f'Error al levantar la cola. {e}')
+        save_log(company['name'], 'Error al levantar las colas', str(e))
+
         return ''
 
     return response.json()
@@ -59,16 +63,46 @@ def getColas(company) -> str:
         response = requests.request("GET", url, headers=headers, data=payload)
     except requests.exceptions.Timeout:
         print('Superado el tiempo de espera al leer las colas.')
+        save_log(company['name'], 'Error al leer las colas', 'Superado el tiempo de espera')
+
         return ''
     except requests.exceptions.RequestException as e:
         print(f'Error al leer las colas. {e}')
+        save_log(company['name'], 'Error al leer las colas', str(e))
+
         return ''
 
+    try:
+        js = response.json()
+    except json.decoder.JSONDecodeError:
+        print('Error al parsear respuesta')
+        save_log(company['name'], 'Error al parsear respuesta', response.text)
 
-    return response.json()
+        js = ''
+    finally:
+        return js
 
 
-def update_log(item, companyname):
+def save_log(companyname, txt_save, txt_desc):
+    try:
+        file_object = open('log.txt', 'a')
+
+        file_object.write('\n{0};{1};{2};{3};{4};{5}'.format(
+            companyname,
+            str(datetime.now()),
+            '',
+            '',
+            txt_desc,
+            txt_save
+            )
+        )
+    except IOError:
+        print('Error al escribir en el log')
+    finally:
+        file_object.close()
+
+
+def update_log(item, companyname, result='Cola reactivada'):
     try:
         file_object = open('log.txt', 'a')
 
@@ -78,7 +112,7 @@ def update_log(item, companyname):
             item['Object_Type_to_Run'],
             item['Object_ID_to_Run'],
             item['Description'],
-            'Cola reactivada'
+            result
         ))
     except IOError:
         print('Error al escribir en el log')
@@ -90,8 +124,11 @@ def procesa_empresa(company):
     json_respuesta = getColas(company)
 
     if 'value' not in json_respuesta:
-        print('Error. No se encuentra atribugo value en la respuesta')
+        print('Error. No se encuentra atributo value en la respuesta')
         print(f'Respuesta {str(json_respuesta)}')
+
+        save_log(company['name'], 'Error. No se encuentra atributo value en la respuesta', str(json_respuesta))
+
         return
 
     for item in json_respuesta['value']:
@@ -110,6 +147,8 @@ def procesa_empresa(company):
                 else:
                     print('')
                     print('No se ha podido reactivar')
+
+                    update_log(item, company['name'], 'No se ha podido reactivar')
 
 
 if __name__ == '__main__':
