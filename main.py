@@ -89,6 +89,11 @@ def update_log(item, companyname):
 def procesa_empresa(company):
     json_respuesta = getColas(company)
 
+    if 'value' not in json_respuesta:
+        print('Error. No se encuentra atribugo value en la respuesta')
+        print(f'Respuesta {str(json_respuesta)}')
+        return
+
     for item in json_respuesta['value']:
         if (item['Object_ID_to_Run'] >= 50000) and (item['Object_ID_to_Run'] <= 99999):
             if item['Status'] not in ['Ready', 'In Process']:
