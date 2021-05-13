@@ -6,10 +6,12 @@ Manda avisos por telegram cuando hay algún problema. Es necesario crear un fich
 - TELEGRAM_GROUP_ID = ID_Grupo_al_que_mandar_avisos
 
 ## Uso
+Build docker image:
 ```
-Build docker image: docker image build -t telegram_requests .
+docker image build -t telegram_requests .
 ```
 
+Using docker:
 ```
-Using docker: docker container run -it telegram_requests
+docker container run -it telegram_requests
 ```
