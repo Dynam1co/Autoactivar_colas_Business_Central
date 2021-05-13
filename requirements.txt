@@ -3,3 +3,14 @@ chardet==4.0.0
 idna==2.10
 requests==2.25.1
 urllib3==1.26.4
+cffi==1.14.0
+cryptography==2.9.2
+decorator==4.4.2
+future==0.18.2
+mccabe==0.6.1
+pycparser==2.20
+python-telegram-bot==12.7
+schedule==0.6.0
+six==1.15.0
+snowballstemmer==2.0.0
+tornado==6.0.4
