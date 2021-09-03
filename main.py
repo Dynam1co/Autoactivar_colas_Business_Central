@@ -195,7 +195,10 @@ if __name__ == '__main__':
             for company in conf['companies']:
                 print(f"Comprobando empresa: {company['name']}")
 
-                procesa_empresa(company)
+                try:
+                    procesa_empresa(company)
+                except:
+                    print(f"Ha ocurrido un error en empresa: {company['name']}")
 
                 print('')
                 print('---------------------------------')

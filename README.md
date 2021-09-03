@@ -8,10 +8,10 @@ Manda avisos por telegram cuando hay algún problema. Es necesario crear un fich
 ## Uso
 Build docker image:
 ```
-docker image build -t telegram_requests .
+docker image build -t colas_bc .
 ```
 
 Using docker:
 ```
-docker container run -it telegram_requests
+docker container run -d --rm -it colas_bc
 ```
