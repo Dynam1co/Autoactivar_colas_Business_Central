@@ -155,10 +155,11 @@ def procesa_empresa(company):
     for item in json_respuesta['value']:
         if (item['Object_ID_to_Run'] >= 50000) and (item['Object_ID_to_Run'] <= 99999):
             if item['Status'] not in ['Ready', 'In Process']:
-                texto_mostrar = 'Cola tipo: {0} id: {1} nombre: {2} esta parada. Se va a arrancar.'.format(
+                texto_mostrar = 'Cola tipo: {0} id: {1} nombre: {2} esta parada. Se va a arrancar. Empresa: {3}'.format(
                     item['Object_Type_to_Run'],
                     item['Object_ID_to_Run'],
-                    item['Description']
+                    item['Description'],
+                    str(company['name'])
                 )
 
                 print(texto_mostrar)
@@ -204,4 +205,4 @@ if __name__ == '__main__':
                 print('---------------------------------')
                 print('')
 
-            time.sleep(120)
+            time.sleep(600)

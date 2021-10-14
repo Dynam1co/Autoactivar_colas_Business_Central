@@ -15,3 +15,8 @@ Using docker:
 ```
 docker container run -d --rm -it colas_bc
 ```
+
+or
+```
+docker container run -d -it colas_bc
+```
